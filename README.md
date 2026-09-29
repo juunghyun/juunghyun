@@ -26,7 +26,7 @@
 
 ## Tech Stack
 
-Kotlin · Java · Spring Boot · JPA · QueryDSL<br>
-MariaDB · MongoDB · Redis · Kafka<br>
-AWS · EKS · Docker · AWS Batch<br>
-Datadog · CloudWatch
+- Kotlin · Java · Spring Boot · JPA · QueryDSL
+- MariaDB · MongoDB · Redis · Kafka
+- AWS · EKS · Docker · AWS Batch
+- Datadog · CloudWatch
