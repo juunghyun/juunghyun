@@ -23,3 +23,10 @@
 <!-- writing starts -->
 - [기술 블로그를 시작하는 이유](https://juunghyun.github.io/posts/why-i-started-this-blog/) · 2026.09.22
 <!-- writing ends -->
+
+## Tech Stack
+
+Kotlin · Java · Spring Boot · JPA · QueryDSL<br>
+MariaDB · MongoDB · Redis · Kafka<br>
+AWS · EKS · Docker · AWS Batch<br>
+Datadog · CloudWatch
