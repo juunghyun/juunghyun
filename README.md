@@ -21,6 +21,7 @@
 ## Writing
 
 <!-- writing starts -->
+- ["형식은 제각각인데, 니가 완벽한 엑셀 파서 만들어 줘" 해결하기](https://juunghyun.github.io/posts/perfect-excel-parser/) · 2026.10.06
 - [기술 블로그를 시작하는 이유](https://juunghyun.github.io/posts/why-i-started-this-blog/) · 2026.09.22
 <!-- writing ends -->
 
