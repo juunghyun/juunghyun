@@ -1,10 +1,9 @@
-// 기여 카드(유리판 머리 · 별 수 · 설명 · 머지 PR 수)를 SVG 한 장으로 굽는다. 의존성 없음.
-// README 는 CSS 와 글꼴을 쓸 수 없어서 카드를 통째로 이미지로 만들고, 글꼴(scripts/build-fonts.sh 산출물)은 SVG 안에 심는다.
-// 실행: node scripts/build-oss-cards.mjs  →  assets/oss/<slug>-card-{light,dark}.svg, assets/links/<slug>-{light,dark}.svg
-// 별 수와 머지 PR 수는 GitHub API 에서 읽는다. Action 이 매일 다시 굽는다.
-// 맨 위 링크 칩(assets/links), Motto 문장(assets/motto), Tech Stack 묶음(assets/stack)도 같은 글꼴 · 알약 꼴이라 여기서 함께 굽는다.
+// 프로필 README 에 들어가는 SVG 를 굽고, Writing 절의 글 목록을 채운다. 의존성 없음.
+// README 는 CSS 와 글꼴을 쓸 수 없어서 꾸밈이 필요한 곳은 이미지로 만들고, 글꼴(scripts/build-fonts.sh 산출물)은 SVG 안에 심는다.
+// 실행: node scripts/build-readme.mjs  →  assets/{links,motto,stack,writing,oss}/*.svg, README.md 의 Writing 절
+// 별 수와 머지 PR 수는 GitHub API, 글 목록은 블로그 RSS 와 graph.json 에서 읽는다. Action 이 매일 다시 돌린다.
 import assert from "node:assert";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
 const DIR = "assets/oss";
 const LOGIN = "juunghyun";
@@ -122,7 +121,8 @@ const marked = (line, y, px, tint, t) =>
   line.map((r) => (r.hl ? `<rect x="${n(r.x - 3)}" y="${y - px}" width="${n(r.w + 6)}" height="${Math.round(px * 1.36)}" rx="5" fill="${tint}" fill-opacity="${t.mark}"/>` : "") + text(r.s, r.x, y, px, r.hl ? 600 : 400, r.hl ? t.name : t.body));
 
 // 납작한 알약: 아이콘 + 글자. 유리는 카드 머리 한 곳에만 쓰고 나머지는 면과 글자로만 그린다.
-const CHIP = { h: 26, px: 12.5 };
+const CHIP = { h: 26, px: 12.5, pad: 11 };
+const MINI = { h: 20, px: 11, pad: 8 }; // Writing 의 날짜 · 태그 줄처럼 글자 옆에 붙는 작은 꼬리표
 const chipW = (label, sub) => Math.ceil(9 + 14 + 5 + width(label, CHIP.px, 600) + (sub ? 6 + width(sub, CHIP.px, 600) : 0) + 11);
 const chip = (x, y, icon, label, c, sub) =>
   `<rect x="${x + 0.5}" y="${y + 0.5}" width="${chipW(label, sub) - 1}" height="${CHIP.h - 1}" rx="${(CHIP.h - 1) / 2}" fill="${c.bg}" ${c.stroke}/>
@@ -219,16 +219,40 @@ const ink = (hex, t) => {
 };
 assert.deepEqual([ink("#000000", themes.dark), ink("#000000", themes.light), ink("#6DB33F", themes.light)], [themes.dark.name, "#000000", "#6DB33F"], "아이콘 색 고르기가 틀렸다");
 
+// 꼬리표 하나를 그리고 [SVG, 폭]을 돌려준다. 아이콘이 있으면 앞에 붙인다.
+function tag(x, y, t, name, icon, color, size = CHIP) {
+  const pad = icon ? 28 : size.pad;
+  const w = Math.ceil(pad + width(name, size.px, 600) + size.pad);
+  const mark = icon ? `<path transform="translate(${x + 9} ${y + 6}) scale(${n(14 / 24)})" fill="${ink(color, t)}" d="${readFileSync(`assets/stack/icons/${icon}.svg`, "utf8").match(/ d="([^"]+)"/)[1]}"/>` : "";
+  return [`<rect x="${x + 0.5}" y="${y + 0.5}" width="${w - 1}" height="${size.h - 1}" rx="${(size.h - 1) / 2}" fill="${t.card}" stroke="${t.edge}" stroke-opacity="0.12"/>${mark}${text(name, x + pad, y + size.h / 2 + size.px * 0.36, size.px, 600, t.name)}`, w];
+}
+
+// Writing 글 하나의 날짜 + 태그 꼬리표 한 줄. 제목과 설명은 README 에 글자로 남기고 이 줄만 이미지다.
+// 글꼴 부분집합에 없는 글자가 든 태그(한글 등)는 건너뛴다.
+function metaRow(date, tags, t) {
+  let x = 2 + Math.ceil(width(date, MINI.px, 600)) + 8;
+  const chips = tags
+    .filter((s) => [...s].every((c) => c in ADV[600]))
+    .map((s) => {
+      const [svg, w] = tag(x, 0, t, s, undefined, undefined, MINI);
+      x += w + 5;
+      return svg;
+    });
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${x - 3}" height="${MINI.h}" viewBox="0 0 ${x - 3} ${MINI.h}" role="img" aria-label="${esc([date, ...tags].join(" · "))}">
+  ${style(600)}
+  ${text(date, 2, MINI.h / 2 + MINI.px * 0.36, MINI.px, 600, t.org)}
+  ${chips.join("\n  ")}
+</svg>
+`;
+}
+
 // Tech Stack 한 묶음: 이름표 아래에 꼬리표를 한 줄로 놓는다.
 function stackBlock(g, t) {
   let x = 4;
-  const tags = g.items.map(([name, icon, color]) => {
-    const pad = icon ? 28 : 11;
-    const w = Math.ceil(pad + width(name, CHIP.px, 600) + 11);
-    const mark = icon ? `<path transform="translate(${x + 9} 30) scale(${n(14 / 24)})" fill="${ink(color, t)}" d="${readFileSync(`assets/stack/icons/${icon}.svg`, "utf8").match(/ d="([^"]+)"/)[1]}"/>` : "";
-    const tag = `<rect x="${x + 0.5}" y="24.5" width="${w - 1}" height="${CHIP.h - 1}" rx="${(CHIP.h - 1) / 2}" fill="${t.card}" stroke="${t.edge}" stroke-opacity="0.12"/>${mark}${text(name, x + pad, 41.5, CHIP.px, 600, t.name)}`;
+  const tags = g.items.map((item) => {
+    const [svg, w] = tag(x, 24, t, ...item);
     x += w + 6;
-    return tag;
+    return svg;
   });
   assert(x - 6 <= W + 8, `${g.label}: 꼬리표가 묶음 폭(${W + 8}px)을 넘는다`);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 8}" height="58" viewBox="0 0 ${W + 8} 58" role="img" aria-label="${esc(g.label)}">
@@ -245,6 +269,58 @@ const bake = (name, draw) => {
 for (const l of links) bake(`links/${l.slug}`, (t) => linkChip(l, t));
 mottos.forEach((m, i) => bake(`motto/${i + 1}`, (t) => motto(m, t)));
 for (const g of stack) bake(`stack/${g.slug}`, (t) => stackBlock(g, t));
+
+// Writing: 최근 글 5개. 제목과 한 줄 요약은 README 에 글자로 쓰고, 날짜 · 태그 줄만 이미지로 굽는다.
+// 글 목록과 날짜는 블로그 RSS, 태그와 요약(글 머리말의 summary)은 블로그의 graph.json 에서 읽는다.
+const BLOG = "https://juunghyun.github.io";
+const decode = (s) =>
+  s
+    .replace(/<!\[CDATA\[(.*?)\]\]>/gs, "$1")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+const day = (d) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(d).replaceAll("-", ".");
+
+const feed = await (await fetch(`${BLOG}/rss.xml`)).text();
+const { nodes } = await (await fetch(`${BLOG}/graph.json`)).json();
+const posts = [...feed.matchAll(/<item>([\s\S]*?)<\/item>/g)]
+  .map(([, body]) => {
+    const pick = (name) => decode(body.match(new RegExp(`<${name}>([\\s\\S]*?)<\\/${name}>`))?.[1] ?? "");
+    return { title: pick("title"), link: pick("link"), date: new Date(pick("pubDate")) };
+  })
+  .filter((p) => p.title && p.link)
+  .sort((a, b) => b.date - a.date)
+  .slice(0, 5)
+  .map((p) => {
+    const node = nodes.find((n) => BLOG + n.url === p.link);
+    return { ...p, slug: p.link.split("/").filter(Boolean).at(-1), day: day(p.date), tags: node?.tags ?? [], summary: node?.summary };
+  });
+// 응답이 이상하면 글 목록을 비우지 않는다
+assert(posts.length, "블로그 RSS 에서 글을 읽지 못했다");
+
+rmSync("assets/writing", { recursive: true, force: true }); // 목록에서 빠진 글의 이미지가 남지 않게
+mkdirSync("assets/writing");
+for (const p of posts) bake(`writing/${p.slug}`, (t) => metaRow(p.day, p.tags, t));
+
+const list = posts
+  .map((p) =>
+    [
+      `**[${p.title}](${p.link})**<br>`,
+      p.summary && `${p.summary}<br>`,
+      `<picture><source media="(prefers-color-scheme: dark)" srcset="assets/writing/${p.slug}-dark.svg"><img src="assets/writing/${p.slug}-light.svg" height="${MINI.h}" alt="${esc([p.day, ...p.tags].join(" · "))}"></picture>`,
+    ]
+      .filter(Boolean)
+      .join("\n")
+  )
+  .join("\n\n");
+const readme = readFileSync("README.md", "utf8");
+// 제목에 $ 가 있어도 치환 패턴으로 읽히지 않게 함수로 넘긴다
+const next = readme.replace(/<!-- writing starts -->[\s\S]*?<!-- writing ends -->/, () => `<!-- writing starts -->\n${list}\n<!-- writing ends -->`);
+assert(next.includes(list), "README 에 writing 표시가 없다");
+if (next !== readme) writeFileSync("README.md", next);
 
 async function gh(path) {
   const res = await fetch(`https://api.github.com/${path}`, {

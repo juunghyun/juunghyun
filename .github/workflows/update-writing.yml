@@ -16,13 +16,12 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: "24"
-      - run: node scripts/update-writing.mjs
-      - run: node scripts/build-oss-cards.mjs
+      - run: node scripts/build-readme.mjs
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Commit if changed
         run: |
-          git add README.md assets/oss
+          git add README.md assets
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
