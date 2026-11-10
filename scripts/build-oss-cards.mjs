@@ -1,7 +1,8 @@
 // 기여 카드(유리판 머리 · 별 수 · 설명 · 머지 PR 수)를 SVG 한 장으로 굽는다. 의존성 없음.
 // README 는 CSS 와 글꼴을 쓸 수 없어서 카드를 통째로 이미지로 만들고, 글꼴(scripts/build-fonts.sh 산출물)은 SVG 안에 심는다.
-// 실행: node scripts/build-oss-cards.mjs  →  assets/oss/<slug>-card-{light,dark}.svg
+// 실행: node scripts/build-oss-cards.mjs  →  assets/oss/<slug>-card-{light,dark}.svg, assets/links/<slug>-{light,dark}.svg
 // 별 수와 머지 PR 수는 GitHub API 에서 읽는다. Action 이 매일 다시 굽는다.
+// 맨 위 링크 칩(블로그 · 이메일 · resume)도 카드의 알약과 같은 꼴이라 여기서 함께 굽는다.
 import assert from "node:assert";
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -29,13 +30,23 @@ const projects = [
 ];
 
 const themes = {
-  light: { name: "#1f2328", org: "#59636e", body: "#424a53", card: "#f6f8fa", chip: "#ffffff", star: "#d99e00", merged: "#8250df", mark: 0.22, base: 0.72, tint: 0.3, sheen: 0.75, rim: [1, 0.35, 0.85], edge: "#1f2328", edgeO: 0.1, shadow: "#1f2328", shadowO: 0.16, shade: 0.05 },
-  dark: { name: "#f0f6fc", org: "#9198a1", body: "#c5ccd3", card: "#151b23", chip: "#212830", star: "#e3b341", merged: "#8957e5", mark: 0.3, base: 0.07, tint: 0.34, sheen: 0.16, rim: [0.55, 0.06, 0.3], edge: "#ffffff", edgeO: 0.05, shadow: "#000000", shadowO: 0.55, shade: 0.2 },
+  light: { name: "#1f2328", org: "#59636e", body: "#424a53", card: "#f6f8fa", chip: "#ffffff", star: "#d99e00", merged: "#8250df", link: "#2563eb", mark: 0.22, base: 0.72, tint: 0.3, sheen: 0.75, rim: [1, 0.35, 0.85], edge: "#1f2328", edgeO: 0.1, shadow: "#1f2328", shadowO: 0.16, shade: 0.05 },
+  dark: { name: "#f0f6fc", org: "#9198a1", body: "#c5ccd3", card: "#151b23", chip: "#212830", star: "#e3b341", merged: "#8957e5", link: "#4493f8", mark: 0.3, base: 0.07, tint: 0.34, sheen: 0.16, rim: [0.55, 0.06, 0.3], edge: "#ffffff", edgeO: 0.05, shadow: "#000000", shadowO: 0.55, shade: 0.2 },
 };
 
 // octicons 16px
 const STAR = "M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z";
 const MERGE = "M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8.5-4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM5 3.25a.75.75 0 1 0 0 .005V3.25Z";
+const PENCIL = "M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z";
+const MAIL = "M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 12.251c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.809L8.38 9.397a.75.75 0 0 1-.76 0L1.5 5.809v6.442Zm13-8.181v-.32a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25v.32L8 7.88Z";
+const FILE = "M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z";
+
+// 맨 위 링크 칩. README 의 <a> 가 slug 로 이미지를 참조한다. sub 는 label 뒤에 흐린 색으로 붙는 글자.
+const links = [
+  { slug: "blog", icon: PENCIL, label: "Blog", sub: "juunghyun.github.io" },
+  { slug: "email", icon: MAIL, label: "forcomfe81@gmail.com" },
+  { slug: "resume", icon: FILE, label: "Resume" },
+];
 
 const W = 400; // 카드 폭(이미지는 사방 4px 여백을 더해 408px). 두 장이 프로필 본문 폭(846px)에 나란히 들어간다
 const P = 16; // 카드 안쪽 여백
@@ -51,7 +62,7 @@ const width = (s, px, weight = 400) =>
 
 const face = (weight) =>
   `@font-face{font-family:ws;font-weight:${weight};src:url(data:font/woff2;base64,${readFileSync(`assets/fonts/wanted-sans-${weight}.woff2`).toString("base64")})format("woff2")}`;
-const STYLE = `<style>${face(400)}${face(600)}text{font-family:ws,-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif}</style>`;
+const style = (...weights) => `<style>${weights.map(face).join("")}text{font-family:ws,-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif}</style>`;
 
 const n = (v) => +v.toFixed(2);
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -95,11 +106,11 @@ function layout(str, px, maxW) {
 
 // 납작한 알약: 아이콘 + 글자. 유리는 카드 머리 한 곳에만 쓰고 나머지는 면과 글자로만 그린다.
 const CHIP = { h: 26, px: 12.5 };
-const chipW = (label) => Math.ceil(9 + 14 + 5 + width(label, CHIP.px, 600) + 11);
-const chip = (x, y, icon, label, c) =>
-  `<rect x="${x + 0.5}" y="${y + 0.5}" width="${chipW(label) - 1}" height="${CHIP.h - 1}" rx="${(CHIP.h - 1) / 2}" fill="${c.bg}" ${c.stroke}/>
+const chipW = (label, sub) => Math.ceil(9 + 14 + 5 + width(label, CHIP.px, 600) + (sub ? 6 + width(sub, CHIP.px, 600) : 0) + 11);
+const chip = (x, y, icon, label, c, sub) =>
+  `<rect x="${x + 0.5}" y="${y + 0.5}" width="${chipW(label, sub) - 1}" height="${CHIP.h - 1}" rx="${(CHIP.h - 1) / 2}" fill="${c.bg}" ${c.stroke}/>
   <path transform="translate(${x + 9} ${y + 6}) scale(0.875)" fill="${c.icon}" d="${icon}"/>
-  ${text(label, x + 28, y + 17.5, CHIP.px, 600, c.fg)}`;
+  ${text(label, x + 28, y + 17.5, CHIP.px, 600, c.fg)}${sub ? text(sub, x + 34 + width(label, CHIP.px, 600), y + 17.5, CHIP.px, 600, c.sub) : ""}`;
 
 function card(p, t, stats) {
   const [org, name] = p.repo.split("/");
@@ -122,7 +133,7 @@ function card(p, t, stats) {
   const focusY = focus.length === 1 ? [footY + 17.5] : [footY + 10.5, footY + 25.5];
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 8}" height="${H + 8}" viewBox="-4 -4 ${W + 8} ${H + 8}" role="img" aria-label="${esc(`${name} by ${org}`)}">
-  ${STYLE}
+  ${style(400, 600)}
   <defs>
     <clipPath id="pill"><rect ${pill}/></clipPath>
     <mask id="outside"><rect x="-4" y="-3" width="${pillW + 8}" height="68" fill="#fff"/><rect ${pill} fill="#000"/></mask>
@@ -158,6 +169,18 @@ function card(p, t, stats) {
   ${focus.flatMap((line, i) => line.map((r) => text(r.s, focusX + r.x, focusY[i], 12, 400, t.org))).join("\n  ")}
 </svg>
 `;
+}
+
+// 링크 칩 한 개 = SVG 한 장(좌우 2px 여백). 카드 밖 흰 바탕에 놓이므로 면은 카드 색을 쓴다.
+const linkChip = (l, t) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${chipW(l.label, l.sub) + 4}" height="${CHIP.h}" viewBox="-2 0 ${chipW(l.label, l.sub) + 4} ${CHIP.h}" role="img" aria-label="${esc(l.label)}">
+  ${style(600)}
+  ${chip(0, 0, l.icon, l.label, { bg: t.card, fg: t.name, sub: t.org, icon: t.link, stroke: `stroke="${t.edge}" stroke-opacity="0.12"` }, l.sub)}
+</svg>
+`;
+
+for (const l of links) {
+  for (const [theme, t] of Object.entries(themes)) writeFileSync(`assets/links/${l.slug}-${theme}.svg`, linkChip(l, t));
 }
 
 async function gh(path) {

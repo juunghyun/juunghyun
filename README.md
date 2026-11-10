@@ -1,8 +1,9 @@
 ## 안녕하세요, 개발자 이정현입니다 👋
 
-[![blog](https://img.shields.io/badge/blog-juunghyun.github.io-2563EB?style=flat-square&logo=astro&logoColor=white)](https://juunghyun.github.io)
-[![email](https://img.shields.io/badge/email-forcomfe81%40gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:forcomfe81@gmail.com)
-[![resume](https://img.shields.io/badge/resume-about-000000?style=flat-square&logo=readme&logoColor=white)](https://juunghyun.github.io/about/)
+<!-- 링크 칩은 scripts/build-oss-cards.mjs 의 links 가 굽는다. 글자를 바꾸려면 거기서 고치고 다시 돌린다. -->
+<a href="https://juunghyun.github.io"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/blog-dark.svg"><img src="assets/links/blog-light.svg" height="26" alt="Blog: juunghyun.github.io"></picture></a>
+<a href="mailto:forcomfe81@gmail.com"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/email-dark.svg"><img src="assets/links/email-light.svg" height="26" alt="Email: forcomfe81@gmail.com"></picture></a>
+<a href="https://juunghyun.github.io/about/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/resume-dark.svg"><img src="assets/links/resume-light.svg" height="26" alt="Resume"></picture></a>
 
 ## Motto
 
