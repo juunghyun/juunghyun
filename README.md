@@ -23,6 +23,7 @@
 | Project | Org | Merged | Focus |
 |:--|:--|:--:|:--|
 | [**DeepTutor**](https://github.com/HKUDS/DeepTutor) ![stars](https://img.shields.io/github/stars/HKUDS/DeepTutor?style=flat-square&label=%E2%98%85) | HKUDS | [![merged PRs](https://img.shields.io/github/issues-search/HKUDS/DeepTutor?query=is%3Apr%20is%3Amerged%20author%3Ajuunghyun&label=PRs&color=2ea44f&style=flat-square)](https://github.com/HKUDS/DeepTutor/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun) | Web i18n, Knowledge Base API error handling |
+| [**billion-context**](https://github.com/ranxianglei/billion-context) ![stars](https://img.shields.io/github/stars/ranxianglei/billion-context?style=flat-square&label=%E2%98%85) | ranxianglei | [![merged PRs](https://img.shields.io/github/issues-search/ranxianglei/billion-context?query=is%3Apr%20is%3Amerged%20author%3Ajuunghyun&label=PRs&color=2ea44f&style=flat-square)](https://github.com/ranxianglei/billion-context/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun) | Upstream circuit breaker recovery |
 
 ## Writing
 
