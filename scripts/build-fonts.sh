@@ -6,10 +6,12 @@ cd "$(dirname "$0")/.."
 
 SRC="${WANTED_SANS_DIR:-$HOME/Library/Fonts}"
 UNICODES="U+0020-007E,U+00B7,U+2013,U+2014,U+2018,U+2019,U+201C,U+201D,U+2026"
+# README 의 Motto 문장에 쓰는 한글. 문장을 바꾸면 여기도 바꾸고 다시 돌린다.
+TEXT="기록해야 뒤돌아본다. 관성을 깨야 변화한다. 꾸준함도 재능이다."
 
 mkdir -p assets/fonts
 for pair in 400:Regular 600:SemiBold; do
-  uvx --from 'fonttools[woff]' pyftsubset "$SRC/WantedSans-${pair#*:}.otf" --unicodes="$UNICODES" \
+  uvx --from 'fonttools[woff]' pyftsubset "$SRC/WantedSans-${pair#*:}.otf" --unicodes="$UNICODES" --text="$TEXT" \
     --layout-features='' --name-IDs='*' --desubroutinize --no-hinting \
     --flavor=woff2 --output-file="assets/fonts/wanted-sans-${pair%%:*}.woff2"
 done

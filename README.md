@@ -7,9 +7,12 @@
 
 ## Motto
 
-- 기록해야 뒤돌아본다.
-- 관성을 깨야 변화한다.
-- 꾸준함도 재능이다.
+<!-- 문장은 scripts/build-oss-cards.mjs 의 mottos 가 굽는다. 글자를 바꾸면 scripts/build-fonts.sh 의 TEXT 도 바꾸고 둘 다 다시 돌린다. -->
+<p>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/motto/1-dark.svg"><img src="assets/motto/1-light.svg" height="28" alt="기록해야 뒤돌아본다."></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/motto/2-dark.svg"><img src="assets/motto/2-light.svg" height="28" alt="관성을 깨야 변화한다."></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/motto/3-dark.svg"><img src="assets/motto/3-light.svg" height="28" alt="꾸준함도 재능이다."></picture>
+</p>
 
 ## Career
 
@@ -36,7 +39,10 @@
 
 ## Tech Stack
 
-- Kotlin · Java · Spring Boot · JPA · QueryDSL
-- MariaDB · MongoDB · Redis · Kafka
-- AWS · EKS · Docker · AWS Batch
-- Datadog · CloudWatch
+<!-- 묶음은 scripts/build-oss-cards.mjs 의 stack 이 굽는다. -->
+<p>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack/backend-dark.svg"><img src="assets/stack/backend-light.svg" width="408" alt="Backend: Kotlin · Java · Spring Boot · JPA · QueryDSL"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack/data-dark.svg"><img src="assets/stack/data-light.svg" width="408" alt="Data: MariaDB · MongoDB · Redis · Kafka"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack/infra-dark.svg"><img src="assets/stack/infra-light.svg" width="408" alt="Infra: AWS · EKS · Docker · AWS Batch"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/stack/observability-dark.svg"><img src="assets/stack/observability-light.svg" width="408" alt="Observability: Datadog · CloudWatch"></picture>
+</p>

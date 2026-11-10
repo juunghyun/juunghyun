@@ -2,7 +2,7 @@
 // README 는 CSS 와 글꼴을 쓸 수 없어서 카드를 통째로 이미지로 만들고, 글꼴(scripts/build-fonts.sh 산출물)은 SVG 안에 심는다.
 // 실행: node scripts/build-oss-cards.mjs  →  assets/oss/<slug>-card-{light,dark}.svg, assets/links/<slug>-{light,dark}.svg
 // 별 수와 머지 PR 수는 GitHub API 에서 읽는다. Action 이 매일 다시 굽는다.
-// 맨 위 링크 칩(블로그 · 이메일 · resume)도 카드의 알약과 같은 꼴이라 여기서 함께 굽는다.
+// 맨 위 링크 칩(assets/links), Motto 문장(assets/motto), Tech Stack 묶음(assets/stack)도 같은 글꼴 · 알약 꼴이라 여기서 함께 굽는다.
 import assert from "node:assert";
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -30,8 +30,8 @@ const projects = [
 ];
 
 const themes = {
-  light: { name: "#1f2328", org: "#59636e", body: "#424a53", card: "#f6f8fa", chip: "#ffffff", star: "#d99e00", merged: "#8250df", link: "#2563eb", mark: 0.22, base: 0.72, tint: 0.3, sheen: 0.75, rim: [1, 0.35, 0.85], edge: "#1f2328", edgeO: 0.1, shadow: "#1f2328", shadowO: 0.16, shade: 0.05 },
-  dark: { name: "#f0f6fc", org: "#9198a1", body: "#c5ccd3", card: "#151b23", chip: "#212830", star: "#e3b341", merged: "#8957e5", link: "#4493f8", mark: 0.3, base: 0.07, tint: 0.34, sheen: 0.16, rim: [0.55, 0.06, 0.3], edge: "#ffffff", edgeO: 0.05, shadow: "#000000", shadowO: 0.55, shade: 0.2 },
+  light: { name: "#1f2328", org: "#59636e", body: "#424a53", card: "#f6f8fa", chip: "#ffffff", star: "#d99e00", merged: "#8250df", link: "#2563eb", inkMin: 1.8, mark: 0.22, base: 0.72, tint: 0.3, sheen: 0.75, rim: [1, 0.35, 0.85], edge: "#1f2328", edgeO: 0.1, shadow: "#1f2328", shadowO: 0.16, shade: 0.05 },
+  dark: { name: "#f0f6fc", org: "#9198a1", body: "#c5ccd3", card: "#151b23", chip: "#212830", star: "#e3b341", merged: "#8957e5", link: "#4493f8", inkMin: 2.5, mark: 0.3, base: 0.07, tint: 0.34, sheen: 0.16, rim: [0.55, 0.06, 0.3], edge: "#ffffff", edgeO: 0.05, shadow: "#000000", shadowO: 0.55, shade: 0.2 },
 };
 
 // octicons 16px
@@ -46,6 +46,19 @@ const links = [
   { slug: "blog", icon: PENCIL, label: "Blog", sub: "juunghyun.github.io" },
   { slug: "email", icon: MAIL, label: "forcomfe81@gmail.com" },
   { slug: "resume", icon: FILE, label: "Resume" },
+];
+
+// Motto: 문장마다 SVG 한 장. ==…== 는 형광펜. 한글은 scripts/build-fonts.sh 의 TEXT 에 있는 글자만 쓸 수 있다.
+const mottos = ["==기록==해야 뒤돌아본다.", "==관성==을 깨야 변화한다.", "==꾸준함==도 재능이다."];
+
+// Tech Stack: 묶음마다 SVG 한 장(이름표 + 납작한 꼬리표). 폭이 카드와 같아 두 묶음씩 나란히 놓인다.
+// 꼬리표는 [이름, 아이콘, 브랜드 색]. 아이콘은 assets/stack/icons/<아이콘>.svg (Simple Icons, CC0)이고, 로고가 없는 기술은 이름만 쓴다.
+// AWS 계열 아이콘은 Simple Icons 최신판에서 빠져서 13.21.0 것을 쓴다.
+const stack = [
+  { slug: "backend", label: "Backend", items: [["Kotlin", "kotlin", "#7F52FF"], ["Java", "openjdk", "#000000"], ["Spring Boot", "springboot", "#6DB33F"], ["JPA"], ["QueryDSL"]] },
+  { slug: "data", label: "Data", items: [["MariaDB", "mariadb", "#003545"], ["MongoDB", "mongodb", "#47A248"], ["Redis", "redis", "#FF4438"], ["Kafka", "apachekafka", "#231F20"]] },
+  { slug: "infra", label: "Infra", items: [["AWS", "amazonwebservices", "#232F3E"], ["EKS", "amazoneks", "#FF9900"], ["Docker", "docker", "#2496ED"], ["AWS Batch"]] },
+  { slug: "observability", label: "Observability", items: [["Datadog", "datadog", "#632CA6"], ["CloudWatch", "amazoncloudwatch", "#FF4F8B"]] },
 ];
 
 const W = 400; // 카드 폭(이미지는 사방 4px 여백을 더해 408px). 두 장이 프로필 본문 폭(846px)에 나란히 들어간다
@@ -103,6 +116,10 @@ function layout(str, px, maxW) {
   assert.deepEqual([first.map((r) => r.s), second.map((r) => r.s)], [["ab", "cd", "."], ["ef"]], "줄바꿈 · 형광펜 나누기가 틀렸다");
   assert.equal(first[2].x, first[1].x + first[1].w, "형광펜 뒤 구두점이 붙지 않았다");
 }
+
+// 한 줄을 그린다: 형광펜 면 + 글자. y 는 기준선.
+const marked = (line, y, px, tint, t) =>
+  line.map((r) => (r.hl ? `<rect x="${n(r.x - 3)}" y="${y - px}" width="${n(r.w + 6)}" height="${Math.round(px * 1.36)}" rx="5" fill="${tint}" fill-opacity="${t.mark}"/>` : "") + text(r.s, r.x, y, px, r.hl ? 600 : 400, r.hl ? t.name : t.body));
 
 // 납작한 알약: 아이콘 + 글자. 유리는 카드 머리 한 곳에만 쓰고 나머지는 면과 글자로만 그린다.
 const CHIP = { h: 26, px: 12.5 };
@@ -163,7 +180,7 @@ function card(p, t, stats) {
   </g>
   ${chip(W - P - chipW(stars), P + 17, STAR, stars, { bg: t.chip, fg: t.name, icon: t.star, stroke: `stroke="${t.edge}" stroke-opacity="0.12"` })}
   <g transform="translate(${P} 0)">
-    ${desc.flatMap((line, i) => line.map((r) => (r.hl ? `<rect x="${n(r.x - 3)}" y="${descY + 21 * i - 14}" width="${n(r.w + 6)}" height="19" rx="5" fill="${p.tint[0]}" fill-opacity="${t.mark}"/>` : "") + text(r.s, r.x, descY + 21 * i, 14, r.hl ? 600 : 400, r.hl ? t.name : t.body))).join("\n    ")}
+    ${desc.flatMap((line, i) => marked(line, descY + 21 * i, 14, p.tint[0], t)).join("\n    ")}
   </g>
   ${chip(P, footY, MERGE, merged, { bg: t.merged, fg: "#fff", icon: "#fff", stroke: "" })}
   ${focus.flatMap((line, i) => line.map((r) => text(r.s, focusX + r.x, focusY[i], 12, 400, t.org))).join("\n  ")}
@@ -179,9 +196,55 @@ const linkChip = (l, t) =>
 </svg>
 `;
 
-for (const l of links) {
-  for (const [theme, t] of Object.entries(themes)) writeFileSync(`assets/links/${l.slug}-${theme}.svg`, linkChip(l, t));
+// Motto 한 문장. 오른쪽 여백 24px 이 문장 사이 간격이 된다.
+function motto(str, t) {
+  const [line] = layout(str, 16, Infinity);
+  const w = Math.ceil(line.at(-1).x + line.at(-1).w);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w + 28}" height="28" viewBox="-4 0 ${w + 28} 28" role="img" aria-label="${esc(str.replaceAll("==", ""))}">
+  ${style(400, 600)}
+  ${marked(line, 20, 16, t.link, t).join("\n  ")}
+</svg>
+`;
 }
+
+// 브랜드 색이 바탕과 거의 구분되지 않으면(검은 로고 + 다크 테마 등) 글자색으로 그린다. 기준(inkMin)은 눈으로 맞춘 값이고, 어두운 바탕에서는 같은 대비도 더 흐려 보여서 높다.
+const lum = (hex) =>
+  [1, 3, 5]
+    .map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
+    .reduce((sum, c, i) => sum + c * [0.2126, 0.7152, 0.0722][i], 0);
+const ink = (hex, t) => {
+  const [hi, lo] = [lum(hex), lum(t.card)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05) >= t.inkMin ? hex : t.name;
+};
+assert.deepEqual([ink("#000000", themes.dark), ink("#000000", themes.light), ink("#6DB33F", themes.light)], [themes.dark.name, "#000000", "#6DB33F"], "아이콘 색 고르기가 틀렸다");
+
+// Tech Stack 한 묶음: 이름표 아래에 꼬리표를 한 줄로 놓는다.
+function stackBlock(g, t) {
+  let x = 4;
+  const tags = g.items.map(([name, icon, color]) => {
+    const pad = icon ? 28 : 11;
+    const w = Math.ceil(pad + width(name, CHIP.px, 600) + 11);
+    const mark = icon ? `<path transform="translate(${x + 9} 30) scale(${n(14 / 24)})" fill="${ink(color, t)}" d="${readFileSync(`assets/stack/icons/${icon}.svg`, "utf8").match(/ d="([^"]+)"/)[1]}"/>` : "";
+    const tag = `<rect x="${x + 0.5}" y="24.5" width="${w - 1}" height="${CHIP.h - 1}" rx="${(CHIP.h - 1) / 2}" fill="${t.card}" stroke="${t.edge}" stroke-opacity="0.12"/>${mark}${text(name, x + pad, 41.5, CHIP.px, 600, t.name)}`;
+    x += w + 6;
+    return tag;
+  });
+  assert(x - 6 <= W + 8, `${g.label}: 꼬리표가 묶음 폭(${W + 8}px)을 넘는다`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W + 8}" height="58" viewBox="0 0 ${W + 8} 58" role="img" aria-label="${esc(g.label)}">
+  ${style(600)}
+  ${text(g.label, 4, 14, 12, 600, t.org)}
+  ${tags.join("\n  ")}
+</svg>
+`;
+}
+
+const bake = (name, draw) => {
+  for (const [theme, t] of Object.entries(themes)) writeFileSync(`assets/${name}-${theme}.svg`, draw(t));
+};
+for (const l of links) bake(`links/${l.slug}`, (t) => linkChip(l, t));
+mottos.forEach((m, i) => bake(`motto/${i + 1}`, (t) => motto(m, t)));
+for (const g of stack) bake(`stack/${g.slug}`, (t) => stackBlock(g, t));
 
 async function gh(path) {
   const res = await fetch(`https://api.github.com/${path}`, {
