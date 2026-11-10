@@ -20,25 +20,11 @@
 
 ## Open Source Contributions
 
-<!-- 카드 하나 = <td> 하나. 표 하나에 카드 2개까지만 넣고, 다음 카드는 새 <table>로 시작한다(같은 표에 <tr>를 늘리면 둘째 줄만 회색이 된다). 카드 머리의 유리판 이미지는 scripts/build-oss-cards.mjs 에 프로젝트를 추가하고 돌려서 만든다. -->
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="https://img.shields.io/github/stars/HKUDS/DeepTutor?style=flat-square&label=%E2%98%85&color=555" align="right" alt="GitHub stars">
-      <a href="https://github.com/HKUDS/DeepTutor"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/deeptutor-glass-dark.svg"><img src="assets/oss/deeptutor-glass-light.svg" height="68" alt="DeepTutor by HKUDS"></picture></a>
-      <p>Lifelong personalized AI tutor. Multi-agent system with RAG knowledge bases.</p>
-      <a href="https://github.com/HKUDS/DeepTutor/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><img src="https://img.shields.io/github/issues-search/HKUDS/DeepTutor?query=is%3Apr%20is%3Amerged%20author%3Ajuunghyun&label=merged%20PRs&color=8250df&style=flat-square" alt="merged PRs"></a>
-      <sup>&nbsp;Web i18n · Knowledge Base API error handling</sup>
-    </td>
-    <td width="50%" valign="top">
-      <img src="https://img.shields.io/github/stars/ranxianglei/billion-context?style=flat-square&label=%E2%98%85&color=555" align="right" alt="GitHub stars">
-      <a href="https://github.com/ranxianglei/billion-context"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/billion-context-glass-dark.svg"><img src="assets/oss/billion-context-glass-light.svg" height="68" alt="billion-context by ranxianglei"></picture></a>
-      <p>Context-compression plugin for AI coding agents. Month-long sessions in a 100K window.</p>
-      <a href="https://github.com/ranxianglei/billion-context/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><img src="https://img.shields.io/github/issues-search/ranxianglei/billion-context?query=is%3Apr%20is%3Amerged%20author%3Ajuunghyun&label=merged%20PRs&color=8250df&style=flat-square" alt="merged PRs"></a>
-      <sup>&nbsp;Upstream circuit breaker recovery</sup>
-    </td>
-  </tr>
-</table>
+<!-- 카드 한 장 = scripts/build-oss-cards.mjs 가 굽는 SVG 하나(글꼴 · 형광펜 · 별 수 · 머지 PR 수 포함). 숫자는 Action 이 매일 다시 굽는다. 새 카드는 스크립트의 projects 에 넣고 돌린 뒤 아래 <a> 를 하나 복사해 붙인다. -->
+<p>
+  <a href="https://github.com/HKUDS/DeepTutor/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/deeptutor-card-dark.svg"><img src="assets/oss/deeptutor-card-light.svg" width="408" alt="DeepTutor by HKUDS. Lifelong personalized AI tutor. Multi-agent system with RAG knowledge bases. Merged PRs: Web i18n · Knowledge Base API error handling"></picture></a>
+  <a href="https://github.com/ranxianglei/billion-context/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/billion-context-card-dark.svg"><img src="assets/oss/billion-context-card-light.svg" width="408" alt="billion-context by ranxianglei. Context-compression plugin for AI coding agents. Month-long sessions in a 100K window. Merged PRs: Upstream circuit breaker recovery"></picture></a>
+</p>
 
 ## Writing
 
