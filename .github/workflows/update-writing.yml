@@ -2,7 +2,7 @@ name: Refresh README
 
 on:
   schedule:
-    - cron: "0 0 * * *" # 매일 09:00 KST
+    - cron: "17 20 * * *" # 매일 05:17 KST (정시는 GitHub 예약이 몰려 몇 시간씩 밀린다)
   workflow_dispatch:
 
 permissions:
