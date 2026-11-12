@@ -34,6 +34,10 @@
 
 <!-- 글 목록은 scripts/build-readme.mjs 가 블로그 RSS 와 graph.json 을 읽어 채운다. 한 줄 요약은 블로그 글 머리말의 summary 다. 여기를 손으로 고치면 다음 실행 때 덮어쓴다. -->
 <!-- writing starts -->
+**[AX를 하고 싶은데 할 곳이 없어? 그럼 오픈소스로 가자](https://juunghyun.github.io/posts/oss-from-scratch/)**<br>
+맨땅에서 오픈소스 컨트리뷰터가 되어 본 기록<br>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/writing/oss-from-scratch-dark.svg"><img src="assets/writing/oss-from-scratch-light.svg" height="20" alt="2026.11.11 · Open Source · AI · GitHub"></picture>
+
 **[클로드 계정 두 개를 더 쉽게 사용하기](https://juunghyun.github.io/posts/cc-baton/)**<br>
 대화를 요약 없이 통째로 옮기는 도구를 만들며 내린 선택과 실패했던 지점들<br>
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/writing/cc-baton-dark.svg"><img src="assets/writing/cc-baton-light.svg" height="20" alt="2026.11.10 · Claude Code · CLI · Python · Go"></picture>
