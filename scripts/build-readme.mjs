@@ -31,7 +31,7 @@ const projects = [
     repo: "embabel/embabel-agent",
     icon: "embabel-agent.svg",
     tint: ["#3a62b0", "#d4a84a"],
-    desc: "==Agent framework== for the JVM. Mixes ==LLM-prompted flows== with code and domain models.",
+    desc: "==JVM agent framework== from the ==creator of Spring==. Mixes LLM prompts with code and domain models.",
     focus: "LLM structured output parsing",
   },
 ];
