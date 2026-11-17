@@ -26,6 +26,14 @@ const projects = [
     desc: "==Context-compression== plugin for AI coding agents. Month-long sessions in a ==100K window==.",
     focus: "Upstream circuit breaker recovery",
   },
+  {
+    slug: "embabel-agent",
+    repo: "embabel/embabel-agent",
+    icon: "embabel-agent.svg",
+    tint: ["#3a62b0", "#d4a84a"],
+    desc: "==Agent framework== for the JVM. Mixes ==LLM-prompted flows== with code and domain models.",
+    focus: "LLM structured output parsing",
+  },
 ];
 
 const themes = {

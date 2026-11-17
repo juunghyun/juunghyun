@@ -28,6 +28,7 @@
 <p>
   <a href="https://github.com/HKUDS/DeepTutor/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/deeptutor-card-dark.svg"><img src="assets/oss/deeptutor-card-light.svg" width="408" alt="DeepTutor by HKUDS. Lifelong personalized AI tutor. Multi-agent system with RAG knowledge bases. Merged PRs: Web i18n · Knowledge Base API error handling"></picture></a>
   <a href="https://github.com/ranxianglei/billion-context/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/billion-context-card-dark.svg"><img src="assets/oss/billion-context-card-light.svg" width="408" alt="billion-context by ranxianglei. Context-compression plugin for AI coding agents. Month-long sessions in a 100K window. Merged PRs: Upstream circuit breaker recovery"></picture></a>
+  <a href="https://github.com/embabel/embabel-agent/pulls?q=is%3Apr+is%3Amerged+author%3Ajuunghyun"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/oss/embabel-agent-card-dark.svg"><img src="assets/oss/embabel-agent-card-light.svg" width="408" alt="embabel-agent by embabel. Agent framework for the JVM. Mixes LLM-prompted flows with code and domain models. Merged PRs: LLM structured output parsing"></picture></a>
 </p>
 
 ## Writing
