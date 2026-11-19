@@ -37,8 +37,8 @@
     <text x="324.88" y="105" font-size="14" font-weight="400" fill="#424a53" textLength="3.5">.</text>
     <text x="0" y="126" font-size="14" font-weight="400" fill="#424a53" textLength="321.63">Mixes LLM prompts with code and domain models.</text>
   </g>
-  <rect x="16.5" y="146.5" width="93" height="25" rx="12.5" fill="#8250df" />
+  <rect x="16.5" y="146.5" width="95" height="25" rx="12.5" fill="#8250df" />
   <path transform="translate(25 152) scale(0.875)" fill="#fff" d="M5.45 5.154A4.25 4.25 0 0 0 9.25 7.5h1.378a2.251 2.251 0 1 1 0 1.5H9.25A5.734 5.734 0 0 1 5 7.123v3.505a2.25 2.25 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.95-.218ZM4.25 13.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm8.5-4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5ZM5 3.25a.75.75 0 1 0 0 .005V3.25Z"/>
-  <text x="44" y="163.5" font-size="12.5" font-weight="600" fill="#fff" textLength="54.7">1 merged</text>
-  <text x="120" y="163.5" font-size="12" font-weight="400" fill="#59636e" textLength="166.11">LLM structured output parsing</text>
+  <text x="44" y="163.5" font-size="12.5" font-weight="600" fill="#fff" textLength="56.53">2 merged</text>
+  <text x="122" y="163.5" font-size="12" font-weight="400" fill="#59636e" textLength="166.11">LLM structured output parsing</text>
 </svg>
